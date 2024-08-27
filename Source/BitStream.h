@@ -13,7 +13,6 @@
 /// \details BitStream is used extensively throughout RakNet and is designed to be used by users as well.
 ///
 
-
 #if defined(_MSC_VER) && _MSC_VER < 1299 // VC6 doesn't support template specialization
 #include "BitStream_NoTemplate.h"
 #else
@@ -29,6 +28,7 @@
 #include "RakWString.h"
 #include "RakAssert.h"
 #include <math.h>
+#include <string>
 #include <float.h>
 
 #ifdef _MSC_VER
@@ -222,6 +222,22 @@ namespace RakNet
 		/// \param[in] rightAlignedBits if true data will be right aligned
 		/// \return true if \a writeToBitstream is true.  true if \a writeToBitstream is false and the read was successful.  false if \a writeToBitstream is false and the read was not successful.
 		bool SerializeBits(bool writeToBitstream, unsigned char* inOutByteArray, const BitSize_t numberOfBitsToSerialize, const bool rightAlignedBits = true );
+
+		template <typename T>
+			void write_string(std::string str) {
+				T size = static_cast<T>(str.length());
+				this->Write(size);
+				this->Write(str.c_str(), size);
+			}
+
+		template <typename T>
+			std::string read_string() {
+				T size;
+				if (!this->Read(size)) return {};
+				std::string str(size, '\0');
+				this->Read(str.data(), size);
+				return str;
+			}
 
 		/// \brief Write any integral type to a bitstream.  
 		/// \details Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
