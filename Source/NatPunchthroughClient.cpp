@@ -792,40 +792,6 @@ void NatPunchthroughClient::SendTTL(const SystemAddress &sa)
 	rakPeerInterface->SendTTL(ipAddressString,sa.GetPort(), 2);
 }
 
-char *TestModeToString(NatPunchthroughClient::SendPing::TestMode tm)
-{
-	switch (tm)
-	{
-		case NatPunchthroughClient::SendPing::TESTING_INTERNAL_IPS:
-			return "TESTING_INTERNAL_IPS";
-		break;
-		case NatPunchthroughClient::SendPing::WAITING_FOR_INTERNAL_IPS_RESPONSE:
-			return "WAITING_FOR_INTERNAL_IPS_RESPONSE";
-		break;
-// 		case NatPunchthroughClient::SendPing::SEND_WITH_TTL:
-// 			return "SEND_WITH_TTL";
-// 		break;
-		case NatPunchthroughClient::SendPing::TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_FACILITATOR_PORT:
-			return "TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_FACILITATOR_PORT";
-		break;
-		case NatPunchthroughClient::SendPing::TESTING_EXTERNAL_IPS_1024_TO_FACILITATOR_PORT:
-			return "TESTING_EXTERNAL_IPS_1024_TO_FACILITATOR_PORT";
-		break;
-		case NatPunchthroughClient::SendPing::TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_1024:
-			return "TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_1024";
-		break;
-		case NatPunchthroughClient::SendPing::TESTING_EXTERNAL_IPS_1024_TO_1024:
-			return "TESTING_EXTERNAL_IPS_1024_TO_1024";
-		break;
-		case NatPunchthroughClient::SendPing::WAITING_AFTER_ALL_ATTEMPTS:
-			return "WAITING_AFTER_ALL_ATTEMPTS";
-		break;
-		case NatPunchthroughClient::SendPing::PUNCHING_FIXED_PORT:
-			return "PUNCHING_FIXED_PORT";
-		break;
-	}
-	return "";
-}
 void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 {
 	if (sa==UNASSIGNED_SYSTEM_ADDRESS)
@@ -853,11 +819,6 @@ void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 		// server = myTime + diff
 		RakNet::Time clockDifferential = rakPeerInterface->GetClockDifferential(sp.facilitator);
 		RakNet::Time serverTime = RakNet::GetTime() + clockDifferential;
-
-		if (oobId==ID_NAT_ESTABLISH_UNIDIRECTIONAL)
-			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("%I64d: %s: OOB ID_NAT_ESTABLISH_UNIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
-		else
-			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("%I64d: %s: OOB ID_NAT_ESTABLISH_BIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
 	}
 }
 void NatPunchthroughClient::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
